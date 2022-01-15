@@ -33,7 +33,7 @@
   },
   train_dataset: {
     _call: 'torchvision.datasets.CIFAR10',
-    root: 'data/cifar10',
+    root: 'data/cifar',
     download: true,
     train: true,
     transform: '$train_transform',  // $train_transform 表示在 python 中，transform = train_transform

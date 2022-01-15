@@ -25,6 +25,14 @@ python train.py -c configs/cifar10_resnet20_sup.jsonnet --gpu 0-3 -e 000
 
 `--gpu` 可指定显卡范围，这里等价于 `--gpu 0,1,2,3`, 可以混用 `--gpu 0,1,4-7`。
 
+### Patch
+
+`config` 支持使用 `patch`, 定义在 `configs/patch.libsonnet` 中。如 
+
+- `--add cifar100` 修改 `dataset` 为 `CIFAR100`
+- `--add "setep(100)"` 修改训练轮数为 100
+- `--add "setbs(256)"` 修改 `batch size` 为 256
+
 ## Abbr
 
 sup -> supervised

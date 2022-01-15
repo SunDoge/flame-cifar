@@ -5,4 +5,14 @@
   setep(epochs):: {
     max_epochs: epochs,
   },
+  cifar100: {
+    local this = self,
+    call: 'torchvision.datasets.CIFAR100',
+    train_dataset+: {
+      _call: this.call,
+    },
+    val_dataset+: {
+      _call: this.call,
+    },
+  },
 }
