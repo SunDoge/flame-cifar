@@ -1,0 +1,3 @@
+[submodule "third_party/flame"]
+	path = third_party/flame
+	url = https://github.com/SunDoge/flame
