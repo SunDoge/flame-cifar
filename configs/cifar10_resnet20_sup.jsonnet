@@ -2,11 +2,10 @@
   // 需要调用的 trainer
   _call: 'lib.trainers.cifar_sup_trainer.Trainer',
   
-  lr: 0.2,
+  base_lr: 0.2,
   batch_size: 128,
   num_workers: 4,
   max_epochs: 200,
-  print_freq: 50,
 
   base_model: {
     _call: 'lib.models.cifar_resnet.cifar_resnet20',
@@ -53,10 +52,5 @@
   val_loader: $.train_loader {
     dataset: '$val_dataset',
     batch_size: $.batch_size * 2,  // jsonnet 支持数学运算
-  },
-  data_module: {
-    _call: 'flame.experimental.trainer.DataModule',
-    train_loader: '$train_loader',
-    val_loader: '$val_loader',
   },
 }
