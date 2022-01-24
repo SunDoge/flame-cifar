@@ -1,7 +1,7 @@
 {
   // 需要调用的 trainer
   _call: 'lib.trainers.cifar_sup_trainer.Trainer',
-  
+
   base_lr: 0.2,
   batch_size: 256,
   num_workers: 8,
@@ -44,7 +44,7 @@
   // 这里使用 flame 提供的帮助函数，会自动包装分布式 data_loader, 并自动使用性能最优参数
   // 比如 pin_memory 和 multiprocess_context
   train_loader: {
-    _call: 'flame.helpers.create_data_loader',
+    _call: 'flame.pytorch.helpers.create_data_loader',
     dataset: '$train_dataset',
     batch_size: $.batch_size,
     num_workers: $.num_workers,
@@ -52,5 +52,6 @@
   val_loader: $.train_loader {
     dataset: '$val_dataset',
     batch_size: $.batch_size * 2,  // jsonnet 支持数学运算
+    shuffle: false,
   },
 }
