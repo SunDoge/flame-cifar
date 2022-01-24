@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
-from flame.arguments import BaseArgs
 import typed_args as ta
+from flame.pytorch.arguments import BaseArgs
 
 
 @dataclass
