@@ -3,8 +3,8 @@
   _call: 'lib.trainers.cifar_sup_trainer.Trainer',
   
   base_lr: 0.2,
-  batch_size: 128,
-  num_workers: 4,
+  batch_size: 256,
+  num_workers: 8,
   max_epochs: 200,
 
   base_model: {

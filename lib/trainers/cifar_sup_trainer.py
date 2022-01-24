@@ -1,6 +1,6 @@
 import functools
 import logging
-from typing import Callable, Tuple
+from typing import Callable, List, Tuple
 
 from torch import Tensor, nn
 import torch
@@ -52,9 +52,9 @@ class Trainer(BaseTrainer):
         summary_writer = Rank0SummaryWriter(log_dir=args.experiment_dir)
 
         # 告诉 checkpoint manager, 哪些对象需要写入 checkpoint
-        # self.checkpoint_manager.register_model(base_model)
-        # self.checkpoint_manager.register_optimizer(optimizer)
-        # self.checkpoint_manager.register_lr_scheduler(scheduler)
+        self.state_manager.register_model(base_model)
+        self.state_manager.register_optimizer(optimizer)
+        self.state_manager.register_lr_scheduler(scheduler)
 
         self.model = model
         self.optimizer = optimizer
@@ -124,16 +124,55 @@ class Trainer(BaseTrainer):
     #     )
 
     def train(self, loader, prefix: str = "train"):
-        pass
+        self.state_manager.train()
+
+        pm = self.progress_meter(prefix)
+
+        losses = pm.get('loss')
+        acc1 = pm.get('acc1')
+        acc5 = pm.get('acc5')
+
+        for batch_idx, batch in pm.enumerate(loader, len(loader)):
+            image, target = self.to_device(batch)
+
+            output = self.model(image)
+            loss: Tensor = self.criterion(output, target)
+
+            loss.backward()
+            self.optimizer.step()
+            self.optimizer.zero_grad(set_to_none=True)
+
+            top1, top5 = topk_accuracy(output, target, topk=(1, 5))
+            batch_size = target.size(0)
+            pm.update_batch_size(batch_size)
+            losses.update(loss, batch_size)
+            acc1.update(top1, batch_size)
+            acc5.update(top5, batch_size)
 
     @torch.inference_mode()
     def validate(self, loader, prefix: str = "val"):
-        pass
+        self.state_manager.eval()
+
+        pm = self.progress_meter(prefix)
+
+        losses = pm.get('loss')
+        acc1 = pm.get('acc1')
+        acc5 = pm.get('acc5')
+
+        for batch_idx, batch in pm.enumerate(loader, len(loader)):
+            image, target = self.to_device(batch)
+
+            output = self.model(image)
+            loss: Tensor = self.criterion(output, target)
+
+            top1, top5 = topk_accuracy(output, target, topk=(1, 5))
+            batch_size = target.size(0)
+            pm.update_batch_size(batch_size)
+            losses.update(loss, batch_size)
+            acc1.update(top1, batch_size)
+            acc5.update(top5, batch_size)
 
     def run(self, max_epochs: int):
-        import time
         for epoch in self.epoch_range(max_epochs):
             self.train(self.train_loader)
             self.validate(self.val_loader)
-
-            time.sleep(0.1)
