@@ -99,11 +99,7 @@ class Trainer(BaseTrainer):
     def validate(self, loader, prefix: str = "val"):
         self.state_manager.eval()
 
-        num_valid_samples = helpers.num_valid_samples_from_data_loader(
-            loader
-        )
-
-        pm = self.progress_meter(prefix, num_valid_samples=num_valid_samples)
+        pm = self.progress_meter(prefix)
 
         losses = pm.get('loss')
         acc1 = pm.get('acc1')
@@ -118,26 +114,21 @@ class Trainer(BaseTrainer):
             For accurate metrics, we have to remove the padded data.
             For your own dataset, this step is not necessary.
             """
+
+            output = self.model(image)
+            loss: Tensor = self.criterion(output, target)
+
+            top1, top5 = topk_accuracy(
+                output,
+                target,
+                topk=(1, 5)
+            )
+
             batch_size = target.size(0)
-            # print(batch_size)
-            num_valid = pm.update_batch_size(batch_size)
-
-            if num_valid:
-                image = image[:num_valid]
-                target = target[:num_valid]
-                output = self.model(image)
-                loss: Tensor = self.criterion(output, target)
-
-                top1, top5 = topk_accuracy(
-                    output,
-                    target,
-                    topk=(1, 5)
-                )
-                losses.update(loss, num_valid)
-                acc1.update(top1, num_valid)
-                acc5.update(top5, num_valid)
-            else:
-                _logger.info('no valid samples left')
+            pm.update_batch_size(batch_size)
+            losses.update(loss, batch_size)
+            acc1.update(top1, batch_size)
+            acc5.update(top5, batch_size)
 
         pm.write_summary(self.summary_writer, self.module_name)
 
