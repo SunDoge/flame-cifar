@@ -48,10 +48,15 @@
     dataset: '$train_dataset',
     batch_size: $.batch_size,
     num_workers: $.num_workers,
+    shuffle: true,
+    drop_last: true,
   },
-  val_loader: $.train_loader {
+  val_loader: {
+    _call: 'flame.pytorch.helpers.create_data_loader',
     dataset: '$val_dataset',
-    batch_size: $.batch_size * 2,  // jsonnet 支持数学运算
+    batch_size: $.batch_size * 2,
+    num_workers: $.num_workers,
     shuffle: false,
+    drop_last: false,
   },
 }

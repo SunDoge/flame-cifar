@@ -14,5 +14,8 @@
     val_dataset+: {
       _call: this.call,
     },
+    base_model+: {
+      num_classes: 100,
+    },
   },
 }
