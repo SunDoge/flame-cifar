@@ -27,7 +27,7 @@ python train.py -c configs/cifar10_resnet20_sup.jsonnet --gpu 0-3 -e exps/000
 
 ### Patch
 
-`config` 支持使用 `patch`, 定义在 `configs/patch.libsonnet` 中。如 
+`config` 支持使用 `patch`, 定义在 `configs/patch.libsonnet` 中。如
 
 - `-a cifar100` 修改 `dataset` 为 `CIFAR100`
 - `-a "setep(100)"` 修改训练轮数为 100
@@ -36,3 +36,10 @@ python train.py -c configs/cifar10_resnet20_sup.jsonnet --gpu 0-3 -e exps/000
 ## Abbr
 
 sup -> supervised
+
+
+## Optional Dependencies
+
+```
+tensorboardX
+```
