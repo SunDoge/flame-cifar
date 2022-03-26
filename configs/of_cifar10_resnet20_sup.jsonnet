@@ -15,7 +15,7 @@
     _use: 'oneflow.optim.SGD',
     momentum: 0.9,
     weight_decay: 1e-4,
-    nesterov: true,
+    // nesterov: true,
   },
   scheduler_fn: {
     _use: 'oneflow.optim.lr_scheduler.MultiStepLR',

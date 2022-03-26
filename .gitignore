@@ -3,3 +3,4 @@ data/
 exps/
 temp/
 log/
+*.whl
